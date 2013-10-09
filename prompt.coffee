@@ -66,7 +66,7 @@ printGrid = ->
   rowSeparator = ('-' for i in [1...GRID_SIZE*4]).join('')
   console.log '\n' + rowStrings.join("\n#{rowSeparator}\n") + '\n'
 
-titleValues = 
+tileValues = 
   A: 2, B:3, C:3, D:2, E:1, F:4, G:2, H:4, I:1, J:8, K:5, L:1,
   M:3, N:1, O:1, P:3, Q:10, R:1, S:1, T:1, U:1, V:4, W:4, X:8,
   Y:4, Z:10
@@ -93,15 +93,18 @@ wordsThroughTile = (grid, x, y) ->
   for length in [MIN_WORD_LENGTH..GRID_SIZE]
     range = length - 1
     addTiles = (func) -> 
+      strings.push (func(i) for i in [0..range]).join ''
+    for offset in [0..length]
       # Vertical
       if inRange(x - offset, y) and inRange(x - offset + range, y)
         addTiles (i) -> grid[x - offset + i][y]
       # Horizontal
       if inRange(x, y - offset) and inRange(x, y - offset + range)
-        addTiles (i) -> grid[x][y - offset + 1]
+        addTiles (i) -> grid[x][y - offset + i]
       # Diagonal
       if inRange(x - offset, y - offset) and inRange(x - offset + range, y - offset + range)
-        addTiles (i) -> grid[x - offset _ i][y - offset + i]
+        addTiles (i) -> 
+          grid[x - offset + i][y - offset + i]
       #Diagonal (lower left to upper right)
       if inRange(x - offset, y + offset) and inRange(x - offset + range, y + offset - range)
         addTiles (i) -> grid[x - offset + i][y + offset - i]
